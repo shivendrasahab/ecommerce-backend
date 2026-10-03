@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="640" viewBox="0 0 1100 640" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .vpc{fill:#f7faf7;stroke:#2e7d32;stroke-width:1.6}
+      .pub{fill:#eef5ff;stroke:#1a56a0;stroke-width:1.2;stroke-dasharray:6 4}
+      .prv{fill:#fff7ee;stroke:#c2661a;stroke-width:1.2;stroke-dasharray:6 4}
+      .svc{fill:#fff;stroke:#333;stroke-width:1.4}
+      .sg{fill:none;stroke:#b00020;stroke-width:1.2;stroke-dasharray:3 3}
+      .t{text-anchor:middle}
+      .b{font-weight:bold}
+      .l{font-size:11px}
+      .f{stroke:#333;stroke-width:1.3;fill:none}
+      .sgl{font-size:10px;fill:#b00020}
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+  </defs>
+  <text x="550" y="22" class="t b" font-size="16">AWS Deployment Topology (region ap-south-1, two Availability Zones)</text>
+
+  <!-- internet / users -->
+  <rect x="20" y="250" width="110" height="60" rx="8" class="svc"/>
+  <text x="75" y="275" class="t b">Internet</text>
+  <text x="75" y="292" class="t l">customers, admins</text>
+  <rect x="20" y="340" width="110" height="60" rx="8" class="svc"/>
+  <text x="75" y="365" class="t b">Payment</text>
+  <text x="75" y="382" class="t l">gateway webhooks</text>
+
+  <!-- VPC -->
+  <rect x="160" y="50" width="920" height="560" rx="10" class="vpc"/>
+  <text x="175" y="70" class="b" fill="#2e7d32">VPC 10.0.0.0/16</text>
+  <text x="175" y="86" class="l">Internet Gateway attached; NAT Gateway in each public subnet for outbound calls (Razorpay, Stripe, FakeStore)</text>
+
+  <!-- AZ labels -->
+  <text x="420" y="110" class="t b">Availability Zone a</text>
+  <text x="840" y="110" class="t b">Availability Zone b</text>
+
+  <!-- Public subnets -->
+  <rect x="190" y="120" width="440" height="120" rx="6" class="pub"/>
+  <text x="200" y="137" class="l b" fill="#1a56a0">Public subnet 10.0.1.0/24</text>
+  <rect x="650" y="120" width="400" height="120" rx="6" class="pub"/>
+  <text x="660" y="137" class="l b" fill="#1a56a0">Public subnet 10.0.2.0/24</text>
+
+  <!-- ALB spanning both -->
+  <rect x="330" y="150" width="580" height="70" rx="8" class="svc"/>
+  <text x="620" y="175" class="t b">Application Load Balancer (HTTPS 443, ACM certificate)</text>
+  <text x="620" y="193" class="t l">target group :8080, health check GET /actuator/health every 30 s, 2 healthy / 3 unhealthy</text>
+  <text x="620" y="208" class="t l">managed by Elastic Beanstalk environment "ecommerce-prod"</text>
+  <rect x="322" y="142" width="596" height="86" rx="8" class="sg"/>
+  <text x="330" y="238" class="sgl">SG-alb: inbound 443 from 0.0.0.0/0</text>
+
+  <!-- Private app subnets -->
+  <rect x="190" y="260" width="440" height="150" rx="6" class="prv"/>
+  <text x="200" y="277" class="l b" fill="#c2661a">Private app subnet 10.0.11.0/24</text>
+  <rect x="650" y="260" width="400" height="150" rx="6" class="prv"/>
+  <text x="660" y="277" class="l b" fill="#c2661a">Private app subnet 10.0.12.0/24</text>
+
+  <rect x="230" y="295" width="360" height="95" rx="8" class="svc"/>
+  <text x="410" y="316" class="t b">EC2 (Elastic Beanstalk, Corretto 21)</text>
+  <text x="410" y="333" class="t l">ecommerce-backend-1.0.0.jar  :8080</text>
+  <text x="410" y="349" class="t l">SPRING_PROFILES_ACTIVE=mysql, MYSQL_HOST, REDIS_HOST</text>
+  <text x="410" y="365" class="t l">RAZORPAY_*, STRIPE_API_KEY from Secrets Manager</text>
+  <text x="410" y="381" class="t l">Auto Scaling group: min 2, max 6, CPU &gt; 60%</text>
+  <rect x="690" y="295" width="320" height="95" rx="8" class="svc"/>
+  <text x="850" y="316" class="t b">EC2 (Elastic Beanstalk, Corretto 21)</text>
+  <text x="850" y="333" class="t l">same configuration, second AZ</text>
+  <text x="850" y="349" class="t l">rolling deployments with</text>
+  <text x="850" y="365" class="t l">additional batch (zero downtime)</text>
+  <rect x="222" y="287" width="796" height="111" rx="8" class="sg"/>
+  <text x="230" y="408" class="sgl">SG-app: inbound 8080 only from SG-alb</text>
+
+  <!-- Private data subnets -->
+  <rect x="190" y="430" width="440" height="160" rx="6" class="prv"/>
+  <text x="200" y="447" class="l b" fill="#c2661a">Private data subnet 10.0.21.0/24</text>
+  <rect x="650" y="430" width="400" height="160" rx="6" class="prv"/>
+  <text x="660" y="447" class="l b" fill="#c2661a">Private data subnet 10.0.22.0/24</text>
+
+  <rect x="230" y="465" width="180" height="100" rx="8" class="svc"/>
+  <text x="320" y="486" class="t b">Amazon RDS MySQL 8</text>
+  <text x="320" y="503" class="t l">primary (db.t3.medium)</text>
+  <text x="320" y="519" class="t l">Multi-AZ, encrypted (KMS)</text>
+  <text x="320" y="535" class="t l">automated backups 7 days</text>
+  <text x="320" y="551" class="t l">:3306</text>
+  <rect x="690" y="465" width="160" height="100" rx="8" class="svc"/>
+  <text x="770" y="486" class="t b">RDS MySQL</text>
+  <text x="770" y="503" class="t l">standby replica</text>
+  <text x="770" y="519" class="t l">(synchronous)</text>
+  <text x="770" y="535" class="t l">automatic failover</text>
+  <rect x="222" y="457" width="636" height="116" rx="8" class="sg"/>
+  <text x="230" y="585" class="sgl">SG-db: inbound 3306 only from SG-app</text>
+
+  <rect x="440" y="465" width="170" height="100" rx="8" class="svc"/>
+  <text x="525" y="486" class="t b">ElastiCache Redis 7</text>
+  <text x="525" y="503" class="t l">cache.t3.micro primary</text>
+  <text x="525" y="519" class="t l">popular_products cache</text>
+  <text x="525" y="535" class="t l">in-transit encryption</text>
+  <text x="525" y="551" class="t l">:6379</text>
+  <rect x="870" y="465" width="160" height="100" rx="8" class="svc"/>
+  <text x="950" y="486" class="t b">ElastiCache Redis</text>
+  <text x="950" y="503" class="t l">read replica</text>
+  <text x="950" y="519" class="t l">auto-failover</text>
+  <rect x="862" y="457" width="176" height="116" rx="8" class="sg"/>
+  <text x="870" y="585" class="sgl">SG-cache: 6379 only from SG-app</text>
+
+  <!-- flows -->
+  <path d="M130,280 L330,185" class="f" marker-end="url(#a)"/>
+  <text x="200" y="222" class="l">HTTPS</text>
+  <path d="M130,370 L175,370 L175,250 L300,250 L330,215" class="f" marker-end="url(#a)"/>
+  <path d="M520,220 L430,295" class="f" marker-end="url(#a)"/>
+  <path d="M720,220 L820,295" class="f" marker-end="url(#a)"/>
+  <path d="M340,390 L320,465" class="f" marker-end="url(#a)"/>
+  <path d="M480,390 L520,465" class="f" marker-end="url(#a)"/>
+  <path d="M780,390 L420,500 L410,500" class="f" marker-end="url(#a)"/>
+  <path d="M820,390 L620,520 L610,520" class="f" marker-end="url(#a)"/>
+
+  <!-- Ops column -->
+  <text x="1065" y="250" class="l" transform="rotate(90 1065 250)">CloudWatch logs + alarms, Secrets Manager, ACM, Route 53</text>
+</svg>

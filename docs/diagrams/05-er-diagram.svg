@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="720" viewBox="0 0 1160 720" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .tbl{fill:#fff;stroke:#333;stroke-width:1.4}
+      .hdr{fill:#dfe8f3;stroke:#333;stroke-width:1.4}
+      .n{font-weight:bold;text-anchor:middle;font-size:13px;font-family:Menlo, Consolas, monospace}
+      .c{font-family:Menlo, Consolas, monospace;font-size:10px}
+      .pk{font-weight:bold}
+      .fk{fill:#1a56a0}
+      .rel{stroke:#333;stroke-width:1.3;fill:none}
+      .m{font-size:11px;fill:#222;font-weight:bold}
+    </style>
+  </defs>
+  <text x="580" y="24" class="n" font-size="16" font-family="Helvetica, Arial, sans-serif">Entity-Relationship Diagram (MySQL schema)</text>
+  <text x="580" y="42" text-anchor="middle" font-size="11" fill="#444">Every table also has created_at, updated_at (TIMESTAMP) and deleted (BOOLEAN). PK in bold, FK in blue. Crow's foot: | = one, &lt; = many</text>
+
+  <!-- column x positions: left 40, mid 440, right 840; box width 280 -->
+
+  <!-- users -->
+  <g transform="translate(40,80)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">users</text>
+    <rect y="22" width="280" height="92" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK AUTO_INCREMENT</text>
+    <text x="8" y="54" class="c">name VARCHAR(255) NOT NULL</text>
+    <text x="8" y="69" class="c">email VARCHAR(255) NOT NULL UNIQUE</text>
+    <text x="8" y="84" class="c">password_hash VARCHAR(255) NOT NULL</text>
+    <text x="8" y="99" class="c">phone_number VARCHAR(255); role ENUM</text>
+  </g>
+
+  <!-- sessions -->
+  <g transform="translate(40,240)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">sessions</text>
+    <rect y="22" width="280" height="77" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c">token VARCHAR(64) NOT NULL UNIQUE</text>
+    <text x="8" y="69" class="c fk">user_id BIGINT FK -> users.id</text>
+    <text x="8" y="84" class="c">expires_at TIMESTAMP; status ENUM</text>
+  </g>
+
+  <!-- carts -->
+  <g transform="translate(40,390)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">carts</text>
+    <rect y="22" width="280" height="47" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c fk">user_id BIGINT FK UNIQUE -> users.id</text>
+  </g>
+
+  <!-- cart_items -->
+  <g transform="translate(40,510)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">cart_items</text>
+    <rect y="22" width="280" height="77" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c fk">cart_id BIGINT FK -> carts.id</text>
+    <text x="8" y="69" class="c fk">product_id BIGINT FK -> products.id</text>
+    <text x="8" y="84" class="c">quantity INT NOT NULL</text>
+  </g>
+
+  <!-- categories -->
+  <g transform="translate(440,80)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">categories</text>
+    <rect y="22" width="280" height="62" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c">name VARCHAR(255) NOT NULL UNIQUE</text>
+    <text x="8" y="69" class="c">description VARCHAR(255)</text>
+  </g>
+
+  <!-- products -->
+  <g transform="translate(440,240)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">products</text>
+    <rect y="22" width="280" height="137" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c">title VARCHAR(255) NOT NULL  [idx]</text>
+    <text x="8" y="69" class="c">description VARCHAR(2000)</text>
+    <text x="8" y="84" class="c">price DOUBLE NOT NULL  [idx]</text>
+    <text x="8" y="99" class="c">image_url VARCHAR(255)</text>
+    <text x="8" y="114" class="c">stock INT NOT NULL</text>
+    <text x="8" y="129" class="c fk">category_id BIGINT FK -> categories.id [idx]</text>
+    <text x="8" y="144" class="c">external_id BIGINT</text>
+  </g>
+
+  <!-- orders -->
+  <g transform="translate(840,80)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">orders</text>
+    <rect y="22" width="280" height="92" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c fk">user_id BIGINT FK -> users.id [idx]</text>
+    <text x="8" y="69" class="c">total_amount DOUBLE NOT NULL</text>
+    <text x="8" y="84" class="c">status ENUM NOT NULL</text>
+    <text x="8" y="99" class="c">shipping_address VARCHAR(255)</text>
+  </g>
+
+  <!-- order_items -->
+  <g transform="translate(840,240)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">order_items</text>
+    <rect y="22" width="280" height="92" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c fk">order_id BIGINT FK -> orders.id</text>
+    <text x="8" y="69" class="c fk">product_id BIGINT FK -> products.id</text>
+    <text x="8" y="84" class="c">quantity INT NOT NULL</text>
+    <text x="8" y="99" class="c">unit_price DOUBLE NOT NULL</text>
+  </g>
+
+  <!-- payments -->
+  <g transform="translate(840,420)">
+    <rect width="280" height="22" class="hdr"/><text x="140" y="16" class="n">payments</text>
+    <rect y="22" width="280" height="107" class="tbl"/>
+    <text x="8" y="39" class="c pk">id BIGINT PK</text>
+    <text x="8" y="54" class="c fk">order_id BIGINT FK -> orders.id [idx]</text>
+    <text x="8" y="69" class="c">provider ENUM NOT NULL</text>
+    <text x="8" y="84" class="c">provider_reference_id VARCHAR(255)</text>
+    <text x="8" y="99" class="c">payment_link VARCHAR(1000)</text>
+    <text x="8" y="114" class="c">amount DOUBLE; status ENUM</text>
+  </g>
+
+  <!-- users 1 : N sessions -->
+  <path d="M180,194 L180,240" class="rel"/>
+  <path d="M173,200 L187,200" class="rel"/>
+  <path d="M180,232 L172,240 M180,232 L188,240" class="rel"/>
+  <text x="188" y="220" class="m">1 : N</text>
+
+  <!-- users 1 : 1 carts -->
+  <path d="M40,130 L20,130 L20,430 L40,430" class="rel"/>
+  <path d="M30,124 L30,136" class="rel"/>
+  <path d="M30,424 L30,436" class="rel"/>
+  <text x="8" y="285" class="m" transform="rotate(-90 8 285)">1 : 1</text>
+
+  <!-- carts 1 : N cart_items -->
+  <path d="M180,459 L180,510" class="rel"/>
+  <path d="M173,465 L187,465" class="rel"/>
+  <path d="M180,502 L172,510 M180,502 L188,510" class="rel"/>
+  <text x="188" y="488" class="m">1 : N</text>
+
+  <!-- cart_items N : 1 products -->
+  <path d="M320,570 L380,570 L380,330 L440,330" class="rel"/>
+  <path d="M328,562 L320,570 L328,578" class="rel"/>
+  <path d="M432,324 L432,336" class="rel"/>
+  <text x="386" y="450" class="m">N : 1</text>
+
+  <!-- categories 1 : N products -->
+  <path d="M580,164 L580,240" class="rel"/>
+  <path d="M573,170 L587,170" class="rel"/>
+  <path d="M580,232 L572,240 M580,232 L588,240" class="rel"/>
+  <text x="587" y="205" class="m">1 : N</text>
+
+  <!-- users 1 : N orders (routed above) -->
+  <path d="M320,100 L380,100 L380,62 L780,62 L780,110 L840,110" class="rel"/>
+  <path d="M328,94 L328,106" class="rel"/>
+  <path d="M832,102 L840,110 L832,118" class="rel"/>
+  <text x="580" y="58" class="m" text-anchor="middle">users 1 : N orders</text>
+
+  <!-- orders 1 : N order_items -->
+  <path d="M980,194 L980,240" class="rel"/>
+  <path d="M973,200 L987,200" class="rel"/>
+  <path d="M980,232 L972,240 M980,232 L988,240" class="rel"/>
+  <text x="988" y="220" class="m">1 : N</text>
+
+  <!-- order_items N : 1 products -->
+  <path d="M840,310 L720,310" class="rel"/>
+  <path d="M832,302 L840,310 L832,318" class="rel"/>
+  <path d="M728,304 L728,316" class="rel"/>
+  <text x="780" y="302" class="m" text-anchor="middle">N : 1</text>
+
+  <!-- orders 1 : N payments -->
+  <path d="M1120,130 L1140,130 L1140,460 L1120,460" class="rel"/>
+  <path d="M1128,124 L1128,136" class="rel"/>
+  <path d="M1128,452 L1120,460 L1128,468" class="rel"/>
+  <text x="1150" y="295" class="m" transform="rotate(90 1150 295)">1 : N</text>
+
+  <!-- Redis note -->
+  <g transform="translate(440,480)">
+    <rect width="300" height="90" rx="6" fill="#fff8e6" stroke="#b8860b" stroke-width="1.3"/>
+    <text x="150" y="20" text-anchor="middle" font-weight="bold">Redis (not relational, shown for completeness)</text>
+    <text x="10" y="42" class="c">popular_products       HASH  id -> Product JSON</text>
+    <text x="10" y="58" class="c">popular_products:ids   SET   {id...}</text>
+    <text x="10" y="74" class="c">TTL 600 s on both keys; refreshed on write</text>
+  </g>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .ll{stroke:#888;stroke-width:1;stroke-dasharray:4 4}
+      .box{fill:#e8eef7;stroke:#333;stroke-width:1.3}
+      .act{fill:#fff;stroke:#333;stroke-width:1.2}
+      .msg{stroke:#333;stroke-width:1.2;fill:none}
+      .ret{stroke:#333;stroke-width:1.2;fill:none;stroke-dasharray:5 3}
+      .t{text-anchor:middle}
+      .l{font-size:11px}
+      .frag{fill:none;stroke:#333;stroke-width:1.2}
+      .fl{font-size:11px;font-weight:bold}
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+    <marker id="o" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#333" stroke-width="1.2"/></marker>
+  </defs>
+  <text x="500" y="22" class="t" font-weight="bold" font-size="16">Sequence Diagram - Place Order (POST /orders)</text>
+
+  <!-- lifelines -->
+  <g>
+    <rect x="30" y="40" width="100" height="36" class="box"/><text x="80" y="63" class="t" font-weight="bold">Client</text>
+    <line x1="80" y1="76" x2="80" y2="680" class="ll"/>
+    <rect x="170" y="40" width="120" height="36" class="box"/><text x="230" y="63" class="t" font-weight="bold">AuthInterceptor</text>
+    <line x1="230" y1="76" x2="230" y2="680" class="ll"/>
+    <rect x="320" y="40" width="120" height="36" class="box"/><text x="380" y="63" class="t" font-weight="bold">OrderController</text>
+    <line x1="380" y1="76" x2="380" y2="680" class="ll"/>
+    <rect x="470" y="40" width="110" height="36" class="box"/><text x="525" y="63" class="t" font-weight="bold">OrderService</text>
+    <line x1="525" y1="76" x2="525" y2="680" class="ll"/>
+    <rect x="610" y="40" width="100" height="36" class="box"/><text x="660" y="63" class="t" font-weight="bold">CartService</text>
+    <line x1="660" y1="76" x2="660" y2="680" class="ll"/>
+    <rect x="740" y="40" width="110" height="36" class="box"/><text x="795" y="63" class="t" font-weight="bold">Repositories</text>
+    <line x1="795" y1="76" x2="795" y2="680" class="ll"/>
+    <rect x="880" y="40" width="90" height="36" class="box"/><text x="925" y="63" class="t" font-weight="bold">MySQL</text>
+    <line x1="925" y1="76" x2="925" y2="680" class="ll"/>
+  </g>
+
+  <!-- 1 request -->
+  <path d="M80,100 L230,100" class="msg" marker-end="url(#a)"/>
+  <text x="155" y="94" class="t l">POST /orders  Authorization: Bearer t  {shippingAddress}</text>
+  <path d="M230,120 L795,120" class="msg" marker-end="url(#a)"/>
+  <text x="512" y="114" class="t l">sessionRepository.findByToken(t)</text>
+  <path d="M795,135 L925,135" class="msg" marker-end="url(#a)"/>
+  <text x="860" y="129" class="t l">SELECT sessions</text>
+  <path d="M795,155 L230,155" class="ret" marker-end="url(#o)"/>
+  <text x="512" y="150" class="t l">Session(ACTIVE, user)</text>
+  <text x="300" y="175" class="l">status ACTIVE and not expired -> request.setAttribute("authenticatedUser", user)</text>
+
+  <path d="M230,195 L380,195" class="msg" marker-end="url(#a)"/>
+  <text x="305" y="189" class="t l">preHandle -> true</text>
+  <path d="M380,215 L525,215" class="msg" marker-end="url(#a)"/>
+  <text x="452" y="209" class="t l">placeOrder(user, dto)</text>
+
+  <!-- transaction fragment -->
+  <rect x="455" y="230" width="520" height="340" class="frag"/>
+  <rect x="455" y="230" width="140" height="18" class="frag" fill="#f0f0f0"/>
+  <text x="525" y="243" class="t fl">@Transactional</text>
+
+  <path d="M525,265 L660,265" class="msg" marker-end="url(#a)"/>
+  <text x="592" y="259" class="t l">getOrCreateCart(user)</text>
+  <path d="M660,280 L795,280" class="msg" marker-end="url(#a)"/>
+  <text x="727" y="274" class="t l">cartRepository.findByUser</text>
+  <path d="M795,295 L925,295" class="msg" marker-end="url(#a)"/>
+  <text x="860" y="289" class="t l">SELECT carts, cart_items</text>
+  <path d="M660,315 L525,315" class="ret" marker-end="url(#o)"/>
+  <text x="592" y="310" class="t l">Cart(items)</text>
+
+  <!-- alt empty -->
+  <rect x="465" y="325" width="500" height="40" class="frag"/>
+  <rect x="465" y="325" width="150" height="16" class="frag" fill="#f0f0f0"/>
+  <text x="540" y="337" class="t fl">alt [cart empty]</text>
+  <text x="600" y="358" class="l">throw BadRequestException -> 400 (handled by GlobalExceptionHandler)</text>
+
+  <!-- loop items -->
+  <rect x="465" y="375" width="500" height="120" class="frag"/>
+  <rect x="465" y="375" width="190" height="16" class="frag" fill="#f0f0f0"/>
+  <text x="560" y="387" class="t fl">loop [for each CartItem]</text>
+  <text x="480" y="406" class="l">if product.stock &lt; qty -> throw InsufficientStockException (rollback)</text>
+  <text x="480" y="422" class="l">product.stock -= qty</text>
+  <path d="M525,438 L795,438" class="msg" marker-end="url(#a)"/>
+  <text x="660" y="432" class="t l">productRepository.save(product)</text>
+  <path d="M795,452 L925,452" class="msg" marker-end="url(#a)"/>
+  <text x="860" y="446" class="t l">UPDATE products SET stock</text>
+  <text x="480" y="474" class="l">orderItem = {product, qty, unitPrice = product.price (snapshot)};  total += price * qty</text>
+
+  <path d="M525,515 L795,515" class="msg" marker-end="url(#a)"/>
+  <text x="660" y="509" class="t l">orderRepository.save(order)  status=PENDING_PAYMENT</text>
+  <path d="M795,530 L925,530" class="msg" marker-end="url(#a)"/>
+  <text x="860" y="524" class="t l">INSERT orders, order_items</text>
+  <path d="M525,552 L660,552" class="msg" marker-end="url(#a)"/>
+  <text x="592" y="546" class="t l">clearCart(user)</text>
+  <path d="M660,565 L925,565" class="msg" marker-end="url(#a)"/>
+  <text x="792" y="560" class="t l">DELETE cart_items (orphanRemoval)</text>
+
+  <text x="600" y="585" class="l">COMMIT  (any exception above -> ROLLBACK, stock untouched)</text>
+
+  <path d="M525,605 L380,605" class="ret" marker-end="url(#o)"/>
+  <text x="452" y="600" class="t l">Order</text>
+  <path d="M380,630 L80,630" class="ret" marker-end="url(#o)"/>
+  <text x="230" y="625" class="t l">201 Created  {id, status: PENDING_PAYMENT, items[], totalAmount}</text>
+</svg>

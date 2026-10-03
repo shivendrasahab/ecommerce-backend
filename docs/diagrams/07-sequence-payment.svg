@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .ll{stroke:#888;stroke-width:1;stroke-dasharray:4 4}
+      .box{fill:#e8eef7;stroke:#333;stroke-width:1.3}
+      .ext{fill:#fff8e6;stroke:#b8860b;stroke-width:1.3}
+      .msg{stroke:#333;stroke-width:1.2;fill:none}
+      .ret{stroke:#333;stroke-width:1.2;fill:none;stroke-dasharray:5 3}
+      .t{text-anchor:middle}
+      .l{font-size:11px}
+      .frag{fill:none;stroke:#333;stroke-width:1.2}
+      .fl{font-size:11px;font-weight:bold}
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+    <marker id="o" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#333" stroke-width="1.2"/></marker>
+  </defs>
+  <text x="500" y="22" class="t" font-weight="bold" font-size="16">Sequence Diagram - Payment Initiation and Webhook Reconciliation</text>
+
+  <g>
+    <rect x="20" y="40" width="90" height="36" class="box"/><text x="65" y="63" class="t" font-weight="bold">Client</text>
+    <line x1="65" y1="76" x2="65" y2="600" class="ll"/>
+    <rect x="140" y="40" width="130" height="36" class="box"/><text x="205" y="63" class="t" font-weight="bold">PaymentController</text>
+    <line x1="205" y1="76" x2="205" y2="600" class="ll"/>
+    <rect x="300" y="40" width="120" height="36" class="box"/><text x="360" y="63" class="t" font-weight="bold">PaymentService</text>
+    <line x1="360" y1="76" x2="360" y2="600" class="ll"/>
+    <rect x="450" y="40" width="110" height="36" class="box"/><text x="505" y="63" class="t" font-weight="bold">OrderService</text>
+    <line x1="505" y1="76" x2="505" y2="600" class="ll"/>
+    <rect x="590" y="40" width="150" height="36" class="box"/><text x="665" y="55" class="t" font-weight="bold">PaymentGateway</text><text x="665" y="70" class="t l">(Razorpay | Stripe impl)</text>
+    <line x1="665" y1="76" x2="665" y2="600" class="ll"/>
+    <rect x="770" y="40" width="100" height="36" class="ext"/><text x="820" y="63" class="t" font-weight="bold">Gateway API</text>
+    <line x1="820" y1="76" x2="820" y2="600" class="ll"/>
+    <rect x="900" y="40" width="80" height="36" class="box"/><text x="940" y="63" class="t" font-weight="bold">DB</text>
+    <line x1="940" y1="76" x2="940" y2="600" class="ll"/>
+  </g>
+
+  <!-- Part A -->
+  <rect x="10" y="90" width="980" height="260" class="frag"/>
+  <rect x="10" y="90" width="230" height="18" class="frag" fill="#f0f0f0"/>
+  <text x="125" y="103" class="t fl">A. POST /payments/initiate (Bearer)</text>
+
+  <path d="M65,125 L205,125" class="msg" marker-end="url(#a)"/>
+  <text x="135" y="119" class="t l">{orderId, provider?, callbackUrl?}</text>
+  <path d="M205,145 L360,145" class="msg" marker-end="url(#a)"/>
+  <text x="282" y="139" class="t l">initiatePayment(user, dto)</text>
+  <path d="M360,165 L505,165" class="msg" marker-end="url(#a)"/>
+  <text x="432" y="159" class="t l">getOrder(user, orderId)</text>
+  <path d="M505,180 L940,180" class="msg" marker-end="url(#a)"/>
+  <text x="722" y="174" class="t l">SELECT orders WHERE id AND user_id</text>
+  <path d="M505,198 L360,198" class="ret" marker-end="url(#o)"/>
+  <text x="432" y="193" class="t l">Order (must be PENDING_PAYMENT, else 400)</text>
+  <text x="370" y="218" class="l">gateway = gateways.get(provider ?: defaultProvider)</text>
+  <path d="M360,235 L665,235" class="msg" marker-end="url(#a)"/>
+  <text x="512" y="229" class="t l">createPaymentLink(order, callbackUrl)</text>
+  <path d="M665,255 L820,255" class="msg" marker-end="url(#a)"/>
+  <text x="742" y="249" class="t l">paymentLink.create / Session.create (amount in paise)</text>
+  <path d="M820,275 L665,275" class="ret" marker-end="url(#o)"/>
+  <text x="742" y="270" class="t l">{id, short_url | url}</text>
+  <path d="M665,293 L360,293" class="ret" marker-end="url(#o)"/>
+  <text x="512" y="288" class="t l">PaymentLinkResult(referenceId, link)</text>
+  <path d="M360,312 L940,312" class="msg" marker-end="url(#a)"/>
+  <text x="650" y="306" class="t l">INSERT payments (INITIATED, provider_reference_id, payment_link)</text>
+  <path d="M360,335 L65,335" class="ret" marker-end="url(#o)"/>
+  <text x="212" y="330" class="t l">201 {paymentId, paymentLink, status: INITIATED}</text>
+
+  <!-- Part B -->
+  <rect x="10" y="370" width="980" height="220" class="frag"/>
+  <rect x="10" y="370" width="300" height="18" class="frag" fill="#f0f0f0"/>
+  <text x="160" y="383" class="t fl">B. Customer pays on hosted page; gateway calls webhook</text>
+
+  <path d="M65,405 L820,405" class="msg" marker-end="url(#a)" stroke-dasharray="2 2"/>
+  <text x="442" y="399" class="t l">customer completes checkout on gateway page</text>
+  <path d="M820,430 L205,430" class="msg" marker-end="url(#a)"/>
+  <text x="512" y="424" class="t l">POST /payments/webhook  {providerReferenceId, status}  (public route)</text>
+  <path d="M205,450 L360,450" class="msg" marker-end="url(#a)"/>
+  <text x="282" y="444" class="t l">handleWebhook(dto)</text>
+  <path d="M360,468 L940,468" class="msg" marker-end="url(#a)"/>
+  <text x="650" y="462" class="t l">SELECT payments WHERE provider_reference_id</text>
+
+  <rect x="340" y="480" width="620" height="80" class="frag"/>
+  <rect x="340" y="480" width="200" height="16" class="frag" fill="#f0f0f0"/>
+  <text x="440" y="492" class="t fl">alt [payment.status == INITIATED]</text>
+  <text x="350" y="512" class="l">payment.status = webhook.status; save</text>
+  <path d="M360,530 L505,530" class="msg" marker-end="url(#a)"/>
+  <text x="432" y="524" class="t l">markPaid(order) if SUCCESS</text>
+  <path d="M505,545 L940,545" class="msg" marker-end="url(#a)"/>
+  <text x="722" y="539" class="t l">UPDATE orders SET status='PAID'</text>
+  <text x="350" y="575" class="l">[else]  no-op: duplicate delivery is ignored (idempotent)</text>
+
+  <path d="M360,592 L205,592" class="ret" marker-end="url(#o)"/>
+  <text x="282" y="587" class="t l">200 PaymentResponseDto</text>
+</svg>

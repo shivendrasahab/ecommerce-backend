@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <style>
+      .uc{fill:#fff;stroke:#333;stroke-width:1.4}
+      .sys{fill:#f7f9fc;stroke:#333;stroke-width:1.5}
+      .t{text-anchor:middle}
+      .title{font-weight:bold;font-size:16px}
+      .assoc{stroke:#333;stroke-width:1.2}
+      .inc{stroke:#555;stroke-width:1.2;stroke-dasharray:5 4}
+      .small{font-size:10px;fill:#444}
+    </style>
+    <marker id="oarrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#555" stroke-width="1.2"/></marker>
+  </defs>
+  <text x="480" y="26" class="t title">Use-Case Diagram - E-Commerce Backend</text>
+
+  <!-- system boundary -->
+  <rect x="200" y="50" width="560" height="570" rx="6" class="sys"/>
+  <text x="480" y="72" class="t" font-weight="bold">E-Commerce Backend System</text>
+
+  <!-- actors -->
+  <g id="customer">
+    <circle cx="80" cy="200" r="14" fill="#fff" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="214" x2="80" y2="256" stroke="#333" stroke-width="1.5"/>
+    <line x1="56" y1="228" x2="104" y2="228" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="256" x2="60" y2="286" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="256" x2="100" y2="286" stroke="#333" stroke-width="1.5"/>
+    <text x="80" y="306" class="t" font-weight="bold">Customer</text>
+  </g>
+  <g id="admin">
+    <circle cx="80" cy="470" r="14" fill="#fff" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="484" x2="80" y2="526" stroke="#333" stroke-width="1.5"/>
+    <line x1="56" y1="498" x2="104" y2="498" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="526" x2="60" y2="556" stroke="#333" stroke-width="1.5"/>
+    <line x1="80" y1="526" x2="100" y2="556" stroke="#333" stroke-width="1.5"/>
+    <text x="80" y="576" class="t" font-weight="bold">Catalogue Admin</text>
+  </g>
+  <g id="gateway">
+    <rect x="820" y="250" width="110" height="60" rx="6" fill="#fff8e6" stroke="#b8860b" stroke-width="1.5"/>
+    <text x="875" y="275" class="t" font-weight="bold">Payment</text>
+    <text x="875" y="292" class="t" font-weight="bold">Gateway</text>
+    <text x="875" y="325" class="t small">Razorpay / Stripe</text>
+  </g>
+  <g id="fakestore">
+    <rect x="820" y="470" width="110" height="60" rx="6" fill="#fff8e6" stroke="#b8860b" stroke-width="1.5"/>
+    <text x="875" y="495" class="t" font-weight="bold">FakeStore</text>
+    <text x="875" y="512" class="t" font-weight="bold">API</text>
+  </g>
+
+  <!-- use cases: customer -->
+  <ellipse cx="330" cy="110" rx="90" ry="24" class="uc"/><text x="330" y="114" class="t">Browse products</text>
+  <ellipse cx="560" cy="110" rx="90" ry="24" class="uc"/><text x="560" y="114" class="t">Search products</text>
+  <ellipse cx="330" cy="170" rx="90" ry="24" class="uc"/><text x="330" y="174" class="t">View popular products</text>
+  <ellipse cx="560" cy="170" rx="90" ry="24" class="uc"/><text x="560" y="174" class="t">Sign up / Log in</text>
+  <ellipse cx="330" cy="230" rx="90" ry="24" class="uc"/><text x="330" y="234" class="t">Manage cart</text>
+  <ellipse cx="560" cy="230" rx="90" ry="24" class="uc"/><text x="560" y="234" class="t">Place order</text>
+  <ellipse cx="330" cy="290" rx="90" ry="24" class="uc"/><text x="330" y="294" class="t">View / cancel orders</text>
+  <ellipse cx="560" cy="290" rx="90" ry="24" class="uc"/><text x="560" y="294" class="t">Pay for order</text>
+  <ellipse cx="560" cy="360" rx="90" ry="24" class="uc"/><text x="560" y="364" class="t">Confirm payment (webhook)</text>
+  <ellipse cx="330" cy="360" rx="90" ry="24" class="uc"/><text x="330" y="364" class="t">Log out</text>
+
+  <!-- use cases: admin -->
+  <ellipse cx="330" cy="470" rx="90" ry="24" class="uc"/><text x="330" y="474" class="t">Create / update product</text>
+  <ellipse cx="560" cy="470" rx="90" ry="24" class="uc"/><text x="560" y="474" class="t">Soft-delete product</text>
+  <ellipse cx="330" cy="540" rx="90" ry="24" class="uc"/><text x="330" y="544" class="t">Manage categories</text>
+  <ellipse cx="560" cy="540" rx="90" ry="24" class="uc"/><text x="560" y="544" class="t">Import from FakeStore</text>
+
+  <!-- customer associations -->
+  <line x1="104" y1="228" x2="240" y2="112" class="assoc"/>
+  <line x1="104" y1="228" x2="240" y2="170" class="assoc"/>
+  <line x1="104" y1="228" x2="240" y2="230" class="assoc"/>
+  <line x1="104" y1="228" x2="240" y2="290" class="assoc"/>
+  <line x1="104" y1="228" x2="240" y2="356" class="assoc"/>
+  <line x1="104" y1="228" x2="470" y2="112" class="assoc"/>
+  <line x1="104" y1="228" x2="470" y2="170" class="assoc"/>
+  <line x1="104" y1="228" x2="470" y2="232" class="assoc"/>
+  <line x1="104" y1="228" x2="470" y2="290" class="assoc"/>
+  <!-- admin associations -->
+  <line x1="104" y1="498" x2="240" y2="472" class="assoc"/>
+  <line x1="104" y1="498" x2="240" y2="540" class="assoc"/>
+  <line x1="104" y1="498" x2="470" y2="472" class="assoc"/>
+  <line x1="104" y1="498" x2="470" y2="540" class="assoc"/>
+  <!-- external -->
+  <line x1="820" y1="280" x2="650" y2="290" class="assoc"/>
+  <line x1="820" y1="300" x2="650" y2="360" class="assoc"/>
+  <line x1="820" y1="500" x2="650" y2="540" class="assoc"/>
+
+  <!-- includes -->
+  <line x1="420" y1="230" x2="470" y2="230" class="inc" marker-end="url(#oarrow)"/>
+  <text x="445" y="222" class="t small">&lt;&lt;include&gt;&gt;</text>
+  <line x1="560" y1="254" x2="560" y2="266" class="inc" marker-end="url(#oarrow)"/>
+  <text x="600" y="262" class="small">&lt;&lt;include&gt;&gt; authenticated</text>
+  <line x1="560" y1="194" x2="560" y2="206" class="inc" marker-end="url(#oarrow)"/>
+  <text x="600" y="202" class="small">&lt;&lt;include&gt;&gt; session token</text>
+  <line x1="560" y1="314" x2="560" y2="336" class="inc" marker-end="url(#oarrow)"/>
+  <text x="600" y="328" class="small">&lt;&lt;include&gt;&gt; marks order PAID</text>
+</svg>

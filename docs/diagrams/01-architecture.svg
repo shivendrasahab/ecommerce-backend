@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <style>
+      .box{fill:#fff;stroke:#333;stroke-width:1.5}
+      .layer{fill:#f4f6fa;stroke:#9aa5b1;stroke-width:1.2;stroke-dasharray:6 4}
+      .title{font-weight:bold;font-size:14px}
+      .small{font-size:11px;fill:#444}
+      .ext{fill:#fff8e6;stroke:#b8860b;stroke-width:1.5}
+      .store{fill:#eaf4ea;stroke:#2e7d32;stroke-width:1.5}
+      .line{stroke:#333;stroke-width:1.4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+
+  <text x="500" y="26" text-anchor="middle" class="title" font-size="17">E-Commerce Backend - High-Level Architecture</text>
+
+  <!-- Clients -->
+  <rect x="30" y="60" width="150" height="70" rx="8" class="box"/>
+  <text x="105" y="88" text-anchor="middle" class="title">Clients</text>
+  <text x="105" y="108" text-anchor="middle" class="small">Web / Mobile / curl</text>
+  <text x="105" y="122" text-anchor="middle" class="small">HTTP + JSON</text>
+
+  <!-- Spring Boot container -->
+  <rect x="220" y="50" width="560" height="440" rx="10" class="layer"/>
+  <text x="500" y="72" text-anchor="middle" class="title">Spring Boot 3.3 application (Java 21, embedded Tomcat :8080)</text>
+
+  <!-- Interceptor -->
+  <rect x="240" y="95" width="520" height="46" rx="6" class="box"/>
+  <text x="500" y="114" text-anchor="middle" class="title">AuthInterceptor</text>
+  <text x="500" y="131" text-anchor="middle" class="small">Bearer token -> Session row -> User (on /cart, /orders, /payments, /auth/me, /auth/logout)</text>
+
+  <!-- Controllers -->
+  <rect x="240" y="160" width="520" height="70" rx="6" class="box"/>
+  <text x="500" y="180" text-anchor="middle" class="title">Controllers (REST, @Valid DTOs)</text>
+  <text x="500" y="200" text-anchor="middle" class="small">AuthController  ProductController  CategoryController  SearchController</text>
+  <text x="500" y="216" text-anchor="middle" class="small">CartController  OrderController  PaymentController  +  GlobalExceptionHandler</text>
+
+  <!-- Services -->
+  <rect x="240" y="250" width="520" height="118" rx="6" class="box"/>
+  <text x="500" y="270" text-anchor="middle" class="title">Services (business rules, @Transactional)</text>
+  <text x="500" y="290" text-anchor="middle" class="small">AuthService  CategoryService  SearchService  CartService  OrderService</text>
+  <rect x="258" y="300" width="230" height="56" rx="5" class="box"/>
+  <text x="373" y="318" text-anchor="middle" class="small" font-weight="bold">ProductService (interface)</text>
+  <text x="373" y="334" text-anchor="middle" class="small">SelfProductService (default)</text>
+  <text x="373" y="348" text-anchor="middle" class="small">FakeStoreProductService (source=fakestore)</text>
+  <rect x="512" y="300" width="230" height="56" rx="5" class="box"/>
+  <text x="627" y="318" text-anchor="middle" class="small" font-weight="bold">PaymentService + PaymentGateway (strategy)</text>
+  <text x="627" y="334" text-anchor="middle" class="small">RazorpayPaymentGateway</text>
+  <text x="627" y="348" text-anchor="middle" class="small">StripePaymentGateway</text>
+
+  <!-- Repos + cache service -->
+  <rect x="240" y="388" width="300" height="80" rx="6" class="box"/>
+  <text x="390" y="408" text-anchor="middle" class="title">Repositories (Spring Data JPA)</text>
+  <text x="390" y="428" text-anchor="middle" class="small">User  Session  Category  Product</text>
+  <text x="390" y="444" text-anchor="middle" class="small">Cart  Order  Payment</text>
+  <text x="390" y="460" text-anchor="middle" class="small">JPQL search / keyword queries</text>
+
+  <rect x="560" y="388" width="200" height="80" rx="6" class="box"/>
+  <text x="660" y="408" text-anchor="middle" class="title">PopularProductCacheService</text>
+  <text x="660" y="428" text-anchor="middle" class="small">RedisTemplate (JSON values)</text>
+  <text x="660" y="444" text-anchor="middle" class="small">HASH + SET, TTL 600 s</text>
+  <text x="660" y="460" text-anchor="middle" class="small">write-through, DB fallback</text>
+
+  <!-- Stores -->
+  <rect x="260" y="530" width="260" height="70" rx="8" class="store"/>
+  <text x="390" y="556" text-anchor="middle" class="title">MySQL 8 (prod) / H2 (dev, test)</text>
+  <text x="390" y="576" text-anchor="middle" class="small">users, sessions, categories, products, carts,</text>
+  <text x="390" y="590" text-anchor="middle" class="small">cart_items, orders, order_items, payments</text>
+
+  <rect x="580" y="530" width="160" height="70" rx="8" class="store"/>
+  <text x="660" y="556" text-anchor="middle" class="title">Redis 7</text>
+  <text x="660" y="576" text-anchor="middle" class="small">popular_products (HASH)</text>
+  <text x="660" y="590" text-anchor="middle" class="small">popular_products:ids (SET)</text>
+
+  <!-- External -->
+  <rect x="30" y="300" width="150" height="60" rx="8" class="ext"/>
+  <text x="105" y="325" text-anchor="middle" class="title">FakeStore API</text>
+  <text x="105" y="345" text-anchor="middle" class="small">fakestoreapi.com (optional)</text>
+
+  <rect x="820" y="300" width="160" height="56" rx="8" class="ext"/>
+  <text x="900" y="322" text-anchor="middle" class="title">Razorpay</text>
+  <text x="900" y="342" text-anchor="middle" class="small">Payment Links API</text>
+
+  <rect x="820" y="380" width="160" height="56" rx="8" class="ext"/>
+  <text x="900" y="402" text-anchor="middle" class="title">Stripe</text>
+  <text x="900" y="422" text-anchor="middle" class="small">Checkout Sessions API</text>
+
+  <!-- Arrows -->
+  <path d="M180,95 L240,118" class="line"/>
+  <path d="M500,141 L500,160" class="line"/>
+  <path d="M500,230 L500,250" class="line"/>
+  <path d="M390,368 L390,388" class="line"/>
+  <path d="M660,368 L660,388" class="line"/>
+  <path d="M390,468 L390,530" class="line"/>
+  <path d="M660,468 L660,530" class="line"/>
+  <path d="M488,340 L600,340 L600,388" class="line" stroke-dasharray="4 3"/>
+  <path d="M258,340 L180,330" class="line"/>
+  <path d="M742,328 L820,328" class="line"/>
+  <path d="M742,348 C 790,348 790,408 820,408" class="line"/>
+  <path d="M820,420 C 760,470 640,480 580,480" class="line" stroke-dasharray="4 3"/>
+  <text x="700" y="500" text-anchor="middle" class="small">webhook (POST /payments/webhook)</text>
+</svg>

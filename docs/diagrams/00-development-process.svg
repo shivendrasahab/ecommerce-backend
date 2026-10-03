@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .s{fill:#eef3fb;stroke:#333;stroke-width:1.4}
+      .t{text-anchor:middle}
+      .b{font-weight:bold;font-size:13px}
+      .l{font-size:11px;fill:#333}
+      .f{stroke:#333;stroke-width:1.4;fill:none}
+      .loop{stroke:#1a56a0;stroke-width:1.3;fill:none;stroke-dasharray:6 4}
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+    <marker id="ab" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1a56a0"/></marker>
+  </defs>
+  <text x="500" y="24" class="t b" font-size="15">Project Development Process</text>
+
+  <g transform="translate(20,60)">
+    <rect width="150" height="80" rx="8" class="s"/>
+    <text x="75" y="24" class="t b">1. Requirements</text>
+    <text x="75" y="44" class="t l">users, use cases,</text>
+    <text x="75" y="58" class="t l">functional and</text>
+    <text x="75" y="72" class="t l">non-functional tables</text>
+  </g>
+  <path d="M170,100 L190,100" class="f" marker-end="url(#a)"/>
+  <g transform="translate(190,60)">
+    <rect width="150" height="80" rx="8" class="s"/>
+    <text x="75" y="24" class="t b">2. Domain and schema</text>
+    <text x="75" y="44" class="t l">entities, relations,</text>
+    <text x="75" y="58" class="t l">indexes, Redis layout,</text>
+    <text x="75" y="72" class="t l">class diagrams</text>
+  </g>
+  <path d="M340,100 L360,100" class="f" marker-end="url(#a)"/>
+  <g transform="translate(360,60)">
+    <rect width="150" height="80" rx="8" class="s"/>
+    <text x="75" y="24" class="t b">3. Vertical slice</text>
+    <text x="75" y="44" class="t l">entity + repository</text>
+    <text x="75" y="58" class="t l">-> service -> controller</text>
+    <text x="75" y="72" class="t l">one feature at a time</text>
+  </g>
+  <path d="M510,100 L530,100" class="f" marker-end="url(#a)"/>
+  <g transform="translate(530,60)">
+    <rect width="150" height="80" rx="8" class="s"/>
+    <text x="75" y="24" class="t b">4. Unit tests</text>
+    <text x="75" y="44" class="t l">Mockito tests for</text>
+    <text x="75" y="58" class="t l">each service;</text>
+    <text x="75" y="72" class="t l">./mvnw test green</text>
+  </g>
+  <path d="M680,100 L700,100" class="f" marker-end="url(#a)"/>
+  <g transform="translate(700,60)">
+    <rect width="150" height="80" rx="8" class="s"/>
+    <text x="75" y="24" class="t b">5. Smoke test</text>
+    <text x="75" y="44" class="t l">run the jar, curl the</text>
+    <text x="75" y="58" class="t l">full flow with Redis,</text>
+    <text x="75" y="72" class="t l">inspect redis-cli</text>
+  </g>
+  <path d="M850,100 L870,100" class="f" marker-end="url(#a)"/>
+  <g transform="translate(870,60)">
+    <rect width="110" height="80" rx="8" class="s"/>
+    <text x="55" y="24" class="t b">6. Benchmark</text>
+    <text x="55" y="44" class="t l">200 requests,</text>
+    <text x="55" y="58" class="t l">DB vs Redis,</text>
+    <text x="55" y="72" class="t l">p50 / p95 / p99</text>
+  </g>
+
+  <!-- feedback loops -->
+  <path d="M775,140 L775,175 L435,175 L435,140" class="loop" marker-end="url(#ab)"/>
+  <text x="605" y="170" class="t l" fill="#1a56a0">defects found in smoke test -> fix slice (e.g. Redis Instant serialisation)</text>
+  <path d="M605,140 L605,205 L265,205 L265,140" class="loop" marker-end="url(#ab)"/>
+  <text x="435" y="200" class="t l" fill="#1a56a0">tests expose design gaps -> adjust model (e.g. unitPrice snapshot on OrderItem)</text>
+
+  <g transform="translate(20,230)">
+    <rect width="960" height="50" rx="8" fill="#fff8e6" stroke="#b8860b" stroke-width="1.3"/>
+    <text x="480" y="20" class="t b">7. Documentation (continuous)</text>
+    <text x="480" y="40" class="t l">README with API reference, SVG diagrams in docs/diagrams, this report; every design decision recorded with its trade-off</text>
+  </g>
+</svg>

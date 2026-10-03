@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="700" viewBox="0 0 1180 700" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <style>
+      .cls{fill:#fff;stroke:#333;stroke-width:1.4}
+      .hdr{fill:#e8eef7;stroke:#333;stroke-width:1.4}
+      .ifc{fill:#eaf4ea}
+      .n{font-weight:bold;text-anchor:middle;font-size:13px}
+      .a{font-family:Menlo, Consolas, monospace;font-size:9.5px}
+      .dep{stroke:#333;stroke-width:1.2;fill:none;stroke-dasharray:5 3}
+      .impl{stroke:#333;stroke-width:1.3;fill:none;stroke-dasharray:7 3}
+      .m{font-size:11px;fill:#222}
+    </style>
+    <marker id="tri2" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#fff" stroke="#333" stroke-width="1.2"/></marker>
+    <marker id="ar2" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#333" stroke-width="1.2"/></marker>
+  </defs>
+  <text x="550" y="24" class="n" font-size="16">Class Diagram - Service Layer and Strategy Patterns</text>
+
+  <!-- ProductService interface -->
+  <g transform="translate(40,60)">
+    <rect width="340" height="24" class="hdr ifc"/><text x="170" y="17" class="n">&lt;&lt;interface&gt;&gt; ProductService</text>
+    <rect y="24" width="340" height="104" class="cls ifc"/>
+    <text x="8" y="41" class="a">+ getProductById(id) : Product</text>
+    <text x="8" y="56" class="a">+ getAllProducts(page,size,sortBy,dir) : Page</text>
+    <text x="8" y="71" class="a">+ getProductsByCategory(catId,page,size) : Page</text>
+    <text x="8" y="86" class="a">+ createProduct(dto) : Product</text>
+    <text x="8" y="101" class="a">+ updateProduct(id,dto) : Product</text>
+    <text x="8" y="116" class="a">+ deleteProduct(id) : void</text>
+  </g>
+  <g transform="translate(40,250)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">SelfProductService  @Primary</text>
+    <rect y="24" width="340" height="64" class="cls"/>
+    <text x="8" y="41" class="a">- productRepository : ProductRepository</text>
+    <text x="8" y="56" class="a">- categoryService : CategoryService</text>
+    <text x="8" y="71" class="a">- popularProductCache : PopularProductCacheService</text>
+    <text x="8" y="84" class="m">@ConditionalOnProperty product.source=self (default)</text>
+  </g>
+  <g transform="translate(40,370)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">FakeStoreProductService</text>
+    <rect y="24" width="340" height="50" class="cls"/>
+    <text x="8" y="41" class="a">- restTemplate : RestTemplate</text>
+    <text x="8" y="56" class="a">- baseUrl : String</text>
+    <text x="8" y="70" class="m">@ConditionalOnProperty product.source=fakestore</text>
+  </g>
+  <path d="M210,250 L210,188" class="impl" marker-end="url(#tri2)"/>
+  <path d="M30,395 L30,160 L40,160" class="impl"/>
+  <path d="M40,395 L30,395" class="impl"/>
+
+  <!-- PaymentGateway interface -->
+  <g transform="translate(800,60)">
+    <rect width="340" height="24" class="hdr ifc"/><text x="170" y="17" class="n">&lt;&lt;interface&gt;&gt; PaymentGateway</text>
+    <rect y="24" width="340" height="44" class="cls ifc"/>
+    <text x="8" y="41" class="a">+ provider() : PaymentProvider</text>
+    <text x="8" y="56" class="a">+ createPaymentLink(order, callbackUrl) : PaymentLinkResult</text>
+  </g>
+  <g transform="translate(800,180)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">RazorpayPaymentGateway</text>
+    <rect y="24" width="340" height="34" class="cls"/>
+    <text x="8" y="41" class="a">- razorpayClient : RazorpayClient</text>
+  </g>
+  <g transform="translate(800,270)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">StripePaymentGateway</text>
+    <rect y="24" width="340" height="34" class="cls"/>
+    <text x="8" y="41" class="a">- apiKey : String</text>
+  </g>
+  <path d="M970,180 L970,128" class="impl" marker-end="url(#tri2)"/>
+  <path d="M790,295 L790,106 L800,106" class="impl"/>
+  <path d="M800,295 L790,295" class="impl"/>
+
+  <!-- PaymentService -->
+  <g transform="translate(800,380)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">PaymentService</text>
+    <rect y="24" width="340" height="94" class="cls"/>
+    <text x="8" y="41" class="a">- gateways : Map&lt;PaymentProvider, PaymentGateway&gt;</text>
+    <text x="8" y="56" class="a">- paymentRepository; orderService; defaultProvider</text>
+    <text x="8" y="74" class="a">+ initiatePayment(user, dto) : PaymentResponseDto</text>
+    <text x="8" y="89" class="a">+ handleWebhook(dto) : PaymentResponseDto</text>
+    <text x="8" y="104" class="a">+ getPaymentsForOrder(user, orderId) : List</text>
+  </g>
+  <path d="M970,380 L970,128" class="dep" marker-end="url(#ar2)"/>
+  <text x="976" y="350" class="m">uses (strategy chosen by provider)</text>
+
+  <!-- Core services middle column -->
+  <g transform="translate(410,60)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">AuthService</text>
+    <rect y="24" width="340" height="84" class="cls"/>
+    <text x="8" y="41" class="a">- userRepository; sessionRepository</text>
+    <text x="8" y="56" class="a">- passwordEncoder : BCryptPasswordEncoder</text>
+    <text x="8" y="71" class="a">+ signup(dto) : User;  + login(dto) : LoginResponseDto</text>
+    <text x="8" y="86" class="a">+ logout(token);  + validateToken(token) : User</text>
+    <text x="8" y="101" class="a">- generateToken() : String  (32 random bytes)</text>
+  </g>
+  <g transform="translate(410,180)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">CartService</text>
+    <rect y="24" width="340" height="74" class="cls"/>
+    <text x="8" y="41" class="a">- cartRepository; productService</text>
+    <text x="8" y="56" class="a">+ getOrCreateCart(user) : Cart</text>
+    <text x="8" y="71" class="a">+ addItem(user,dto);  + updateItem(user,pid,qty)</text>
+    <text x="8" y="86" class="a">+ removeItem(user,pid);  + clearCart(user)</text>
+  </g>
+  <g transform="translate(410,290)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">OrderService</text>
+    <rect y="24" width="340" height="74" class="cls"/>
+    <text x="8" y="41" class="a">- orderRepository; productRepository; cartService</text>
+    <text x="8" y="56" class="a">+ placeOrder(user,dto) : Order   @Transactional</text>
+    <text x="8" y="71" class="a">+ getOrder(user,id);  + getOrders(user,page,size)</text>
+    <text x="8" y="86" class="a">+ cancelOrder(user,id);  + markPaid(order)</text>
+  </g>
+  <g transform="translate(410,400)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">PopularProductCacheService</text>
+    <rect y="24" width="340" height="84" class="cls"/>
+    <text x="8" y="41" class="a">- redisTemplate : RedisTemplate&lt;String,Object&gt;</text>
+    <text x="8" y="56" class="a">- hashKey; idSetKey; ttlSeconds; keywords</text>
+    <text x="8" y="71" class="a">+ getPopularProducts() : List&lt;Product&gt;</text>
+    <text x="8" y="86" class="a">+ isPopular(p);  + onProductChanged(p)</text>
+    <text x="8" y="101" class="a">+ onProductRemoved(p)</text>
+  </g>
+  <g transform="translate(410,520)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">SearchService / CategoryService</text>
+    <rect y="24" width="340" height="72" class="cls"/>
+    <text x="8" y="41" class="a">+ search(q,page,size,sortBy,dir) : Page&lt;Product&gt;</text>
+    <text x="8" y="56" class="a">  SORTABLE = {title, price, createdAt}; MAX 50</text>
+    <text x="8" y="74" class="a">+ getAllCategories(); getCategoryById(id)</text>
+    <text x="8" y="86" class="a">+ createCategory(dto); getOrCreateByName(name)</text>
+  </g>
+
+  <!-- Security -->
+  <g transform="translate(40,480)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">AuthInterceptor  (HandlerInterceptor)</text>
+    <rect y="24" width="340" height="44" class="cls"/>
+    <text x="8" y="41" class="a">+ preHandle(req,res,handler) : boolean</text>
+    <text x="8" y="56" class="a">  USER_ATTRIBUTE = "authenticatedUser"</text>
+  </g>
+  <g transform="translate(40,570)">
+    <rect width="340" height="24" class="hdr"/><text x="170" y="17" class="n">GlobalExceptionHandler  @RestControllerAdvice</text>
+    <rect y="24" width="340" height="60" class="cls"/>
+    <text x="8" y="41" class="a">404 ResourceNotFound / NoResourceFound</text>
+    <text x="8" y="56" class="a">400 BadRequest / InsufficientStock / Validation</text>
+    <text x="8" y="71" class="a">401 Unauthorized;  502 PaymentGateway;  500 other</text>
+  </g>
+
+  <!-- dependencies -->
+  <path d="M380,500 L395,500 L395,110 L410,110" class="dep" marker-end="url(#ar2)"/>
+  <text x="391" y="300" class="m" transform="rotate(-90 391 300)">validateToken</text>
+  <path d="M410,230 L380,290" class="dep" marker-end="url(#ar2)"/>
+  <path d="M550,290 L550,278" class="dep" marker-end="url(#ar2)"/>
+  <path d="M380,300 L410,440" class="dep" marker-end="url(#ar2)"/>
+  <path d="M800,430 L750,340" class="dep" marker-end="url(#ar2)"/>
+  <text x="760" y="395" class="m">orderService</text>
+</svg>
