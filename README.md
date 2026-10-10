@@ -46,20 +46,7 @@ Scaler Neovarsity - Woolf.
 
 ## Architecture
 
-```
-                 +-----------------------------------------------------------+
-   HTTP/JSON     |                    Spring Boot application                |
- ------------->  |  Controllers  ->  Services  ->  Repositories (Spring Data) |
-                 |      |              |                   |                  |
-                 |  AuthInterceptor    |  PaymentGateway    |                  |
-                 |  (Bearer token)     |  (Razorpay/Stripe) |                  |
-                 +---------------------|-------------------|------------------+
-                                       |                   |
-                              +--------v------+    +-------v-------+
-                              |     Redis     |    |  MySQL / H2   |
-                              | popular cache |    |  (JPA tables) |
-                              +---------------+    +---------------+
-```
+![High-level architecture](docs/diagrams/01-architecture.svg)
 
 Layering is strict and one-directional:
 
@@ -72,7 +59,14 @@ Layering is strict and one-directional:
 * **Security** (`security/`) is a single `HandlerInterceptor` that resolves the Bearer token to a
   `User` for `/cart/**`, `/orders/**`, `/payments/**` (except the webhook), `/auth/logout`, `/auth/me`.
 
-Diagrams (class, ER, sequence, deployment) live in [`docs/diagrams/`](docs/diagrams/).
+More diagrams live in [`docs/diagrams/`](docs/diagrams/):
+
+| | |
+|---|---|
+| ![Domain model](docs/diagrams/03-class-diagram-domain.svg) | ![ER diagram](docs/diagrams/05-er-diagram.svg) |
+| Domain model (JPA entities) | Database schema |
+| ![Place order](docs/diagrams/06-sequence-place-order.svg) | ![Payment flow](docs/diagrams/07-sequence-payment.svg) |
+| Place-order sequence | Payment initiation and webhook |
 
 ---
 
@@ -393,7 +387,3 @@ eb deploy
   cache outage never takes the service out of the load balancer.
 * **Allow-listed sorting.** `SearchService` rejects any `sortBy` outside `title|price|createdAt`,
   so callers cannot probe or sort by arbitrary columns.
-
-## License
-
-MIT
